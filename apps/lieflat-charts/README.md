@@ -6,9 +6,15 @@ Noncommercial. See `NOTICE.md` and `PLAN.md`.
 
 ## Run
 
+Local (Vite `base` is `/lieflat-charts/` so assets match Pages):
+
 ```bash
 bun install
 bun run dev
 ```
 
-Then open the printed local URL. `bun test` covers parse + HTML generation.
+Open **http://localhost:5173/lieflat-charts/** — not the site root.
+
+Live (Cloudflare Pages project `tech-demos`): **https://tech-demos.pages.dev/lieflat-charts/**
+
+`bun test` covers parse + HTML generation.
