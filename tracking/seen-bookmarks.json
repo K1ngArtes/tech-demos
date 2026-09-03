@@ -5,7 +5,9 @@
       "title": "Lieflat Charts",
       "url": "https://x.com/Zhiyu333/status/2094719194302706136",
       "date": "2026-09-02"
-    },
+    }
+  ],
+  "skipped": [
     {
       "id": "2094457600259842065",
       "title": "pstack",
@@ -13,6 +15,5 @@
       "date": "2026-09-03"
     }
   ],
-  "skipped": [],
   "built": []
 }
