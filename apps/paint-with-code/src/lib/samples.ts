@@ -60,84 +60,113 @@ brush.line(-150, 40, -168, 88)
     id: "gold",
     name: "Gold",
     blurb: "One yellow hibiscus on black: five lobes, a scattered crimson heart, thin stamen.",
-    code: `// Yellow hibiscus on black — edit a petal offset, then Run
+    code: `// Yellow hibiscus on black — edit a petal angle, then Run
 brush.seed(7)
 brush.angleMode(brush.DEGREES)
 brush.clear("#000000")
 
-const cx = 36
-const cy = 8
+const cx = 40
+const cy = 10
 
-brush.wash("#6a7c58", 64)
+brush.wash("#6a7c58", 58)
 brush.noStroke()
-brush.circle(-186, -8, 120)
-brush.wash("#4e5e44", 48)
-brush.circle(-150, 72, 86)
+brush.circle(-176, 6, 96)
+brush.wash("#4e5e44", 40)
+brush.circle(-148, 78, 70)
 brush.noWash()
 
+function petalPts(ang, len, halfW) {
+  const a = (ang * Math.PI) / 180
+  const ca = Math.cos(a)
+  const sa = Math.sin(a)
+  const px = -sa
+  const py = ca
+  const pts = []
+  const n = 16
+  for (const side of [1, -1]) {
+    const seq = []
+    for (let i = 0; i <= n; i++) {
+      const t = i / n
+      const env = Math.pow(Math.sin(t * Math.PI), 0.62)
+      const widen = 0.22 + 0.78 * Math.pow(t, 0.48)
+      const ruf = 1 + 0.07 * (random() - 0.5)
+      const w = halfW * env * widen * ruf
+      seq.push([
+        cx + ca * len * t + side * px * w,
+        cy + sa * len * t + side * py * w,
+      ])
+    }
+    if (side === 1) pts.push(...seq)
+    else pts.push(...seq.reverse())
+  }
+  return pts
+}
+
 const petals = [
-  { a: 12,  len: 128, w: 92, c: "#f4d44c" },
-  { a: 84,  len: 112, w: 84, c: "#ecd64e" },
-  { a: 156, len: 108, w: 80, c: "#d9b234" },
-  { a: 220, len: 124, w: 90, c: "#f0ce46" },
-  { a: 292, len: 116, w: 86, c: "#e8c43c" },
+  { a: 8,   len: 168, w: 78, c: "#f4d44c" },
+  { a: 76,  len: 150, w: 72, c: "#ecd64e" },
+  { a: 152, len: 144, w: 70, c: "#d9b234" },
+  { a: 224, len: 162, w: 76, c: "#f0ce46" },
+  { a: 298, len: 154, w: 74, c: "#e8c43c" },
 ]
 
-for (const p of petals) {
-  const rad = (p.a * Math.PI) / 180
-  const ca = Math.cos(rad)
-  const sa = Math.sin(rad)
-  const x = cx + ca * p.len * 0.52
-  const y = cy + sa * p.len * 0.52
-  brush.wash(p.c, 220)
-  brush.noStroke()
-  brush.circle(x, y, p.w)
-  brush.circle(cx + ca * p.len * 0.28, cy + sa * p.len * 0.28, p.w * 0.62)
-  brush.noWash()
-  brush.fill(p.c, 72)
-  brush.fillBleed(0.2, "out")
-  brush.fillTexture(0.5, 0.36)
-  brush.noStroke()
-  brush.circle(x, y, p.w * 0.9, true)
-}
-
-brush.noFill()
-brush.set("crayon", "#b89028", 2.6)
-for (const p of petals) {
-  const rad = (p.a * Math.PI) / 180
-  const ca = Math.cos(rad)
-  const sa = Math.sin(rad)
-  brush.line(cx + ca * 22, cy + sa * 22, cx + ca * p.len * 0.82, cy + sa * p.len * 0.82)
-}
-
-brush.set("pen", "#efe6cc", 0.62)
-const filaments = [
-  [cx - 6, cy - 4, cx - 78, cy - 168],
-  [cx + 10, cy - 6, cx + 96, cy - 150],
-  [cx + 14, cy + 4, cx + 168, cy + 22],
-  [cx + 4, cy + 12, cx + 58, cy + 156],
-  [cx - 12, cy + 10, cx - 150, cy + 96],
-]
-for (const [x1, y1, x2, y2] of filaments) brush.line(x1, y1, x2, y2)
-
-brush.wash("#c9a028", 80)
 brush.noStroke()
-brush.circle(cx - 6, cy + 8, 38)
-brush.wash("#e07030", 100)
-brush.circle(cx + 4, cy + 2, 30)
-brush.wash("#d45a28", 70)
-brush.circle(cx - 16, cy + 18, 20)
+for (const p of petals) {
+  brush.wash(p.c, 225)
+  brush.polygon(petalPts(p.a, p.len, p.w))
+  brush.wash("#c9a028", 48)
+  brush.polygon(petalPts(p.a + 3, p.len * 0.72, p.w * 0.55))
+}
+brush.noWash()
+
+brush.set("crayon", "#b89028", 2.2)
+for (const p of petals) {
+  const rad = (p.a * Math.PI) / 180
+  brush.line(
+    cx + Math.cos(rad) * 20,
+    cy + Math.sin(rad) * 20,
+    cx + Math.cos(rad) * p.len * 0.78,
+    cy + Math.sin(rad) * p.len * 0.78,
+  )
+}
+
+brush.set("pen", "#e8dcc0", 0.5)
+const rays = [
+  { a: -98, L: 178 },
+  { a: -36, L: 152 },
+  { a: 14, L: 186 },
+  { a: 128, L: 138 },
+]
+for (const ray of rays) {
+  const rad = (ray.a * Math.PI) / 180
+  let x = cx + random(-7, 7)
+  let y = cy + random(-7, 7)
+  for (let i = 1; i <= 5; i++) {
+    const t = i / 5
+    const nx = cx + Math.cos(rad) * ray.L * t + random(-6, 6)
+    const ny = cy + Math.sin(rad) * ray.L * t + random(-6, 6)
+    brush.line(x, y, nx, ny)
+    x = nx
+    y = ny
+  }
+}
+
+brush.wash("#e07030", 92)
+brush.noStroke()
+brush.circle(cx + 2, cy + 4, 32)
+brush.wash("#d45a28", 64)
+brush.circle(cx - 14, cy + 16, 20)
 brush.noWash()
 
 const hearts = [
-  [-34, 16, 24, 210, "#c23028"],
-  [28, -24, 18, 150, "#9a1c18"],
-  [8, 36, 22, 95, "#7a1410"],
-  [-40, -18, 14, 72, "#d44838"],
-  [38, 18, 20, 180, "#b42822"],
-  [-8, -8, 16, 125, "#5c0c0c"],
-  [18, 12, 12, 68, "#e06048"],
-  [-24, 32, 11, 52, "#8a201c"],
+  [-12, 8, 26, 205, "#c23028"],
+  [22, -10, 18, 140, "#9a1c18"],
+  [-28, -6, 15, 78, "#d44838"],
+  [8, 24, 20, 160, "#b42822"],
+  [30, 14, 11, 70, "#e06048"],
+  [-8, -20, 13, 95, "#8a1814"],
+  [4, 6, 17, 120, "#6e1010"],
+  [-22, 22, 10, 58, "#a02820"],
 ]
 for (const [dx, dy, r, a, c] of hearts) {
   brush.wash(c, a)
@@ -146,32 +175,23 @@ for (const [dx, dy, r, a, c] of hearts) {
 }
 brush.noWash()
 
-brush.fill("#b42822", 64)
-brush.fillBleed(0.18)
-brush.fillTexture(0.4, 0.28)
+brush.wash("#140404", 220)
 brush.noStroke()
-brush.circle(cx - 10, cy + 8, 22, true)
-brush.fill("#6e1010", 50)
-brush.circle(cx + 16, cy - 12, 16, true)
-brush.noFill()
-
-brush.wash("#0e0404", 235)
-brush.noStroke()
-brush.circle(cx + 2, cy + 4, 14)
+brush.circle(cx - 2, cy + 6, 9)
+brush.circle(cx + 6, cy + 2, 6)
 brush.noWash()
 
-const sx = cx - 118
-const sy = cy + 128
-brush.set("crayon", "#c47818", 3.1)
-brush.line(cx - 8, cy + 18, sx, sy)
-brush.set("marker", "#e89428", 1.4)
-brush.line(cx - 14, cy + 22, sx + 8, sy - 8)
-brush.wash("#e07020", 210)
+brush.set("crayon", "#c47818", 3.2)
+brush.line(cx - 8, cy + 18, cx - 54, cy + 72)
+brush.line(cx - 54, cy + 72, cx - 112, cy + 128)
+brush.set("marker", "#e89428", 1.35)
+brush.line(cx - 14, cy + 24, cx - 118, cy + 136)
+brush.wash("#e07020", 205)
 brush.noStroke()
-brush.circle(sx, sy, 6)
-for (const t of [0.28, 0.46, 0.64, 0.8, 0.92]) {
-  brush.wash("#d45a20", 170)
-  brush.circle(cx - 8 + (sx - (cx - 8)) * t, cy + 18 + (sy - (cy + 18)) * t, 3.4)
+brush.circle(cx - 118, cy + 140, 5.5)
+for (const t of [0.55, 0.72, 0.86, 0.96]) {
+  brush.wash("#d45a20", 165)
+  brush.circle(cx - 8 - 110 * t, cy + 18 + 122 * t, 3.2)
 }
 brush.noWash()
 `,
