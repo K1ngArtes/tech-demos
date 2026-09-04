@@ -5,12 +5,6 @@
       "title": "Lieflat Charts",
       "url": "https://x.com/Zhiyu333/status/2094719194302706136",
       "date": "2026-09-02"
-    },
-    {
-      "id": "2091570990048276897",
-      "title": "Paint with Code / p5.brush",
-      "url": "https://x.com/kickingkeys/status/2091570990048276897",
-      "date": "2026-09-04"
     }
   ],
   "skipped": [
@@ -27,5 +21,13 @@
       "date": "2026-09-04"
     }
   ],
-  "built": []
+  "built": [
+    {
+      "id": "2091570990048276897",
+      "title": "Paint with Code / p5.brush",
+      "url": "https://x.com/kickingkeys/status/2091570990048276897",
+      "date": "2026-09-04",
+      "pr": "https://github.com/K1ngArtes/tech-demos/pull/2"
+    }
+  ]
 }
