@@ -129,51 +129,53 @@ brush.circle(0, 170, 80)
     code: `// Night meadow — edit a bloom's mint/coral, then Run
 brush.seed(9)
 brush.angleMode(brush.DEGREES)
-brush.clear("#1a2614")
+brush.clear("#162014")
 
-brush.wash("#24351c", 90)
+brush.wash("#1e2e18", 110)
 brush.noStroke()
-brush.circle(-90, 70, 210)
-brush.wash("#121c0e", 100)
-brush.circle(130, -90, 190)
-brush.wash("#2a3e22", 70)
-brush.circle(40, 170, 150)
+brush.circle(-80, 50, 230)
+brush.wash("#0e160c", 120)
+brush.circle(140, -80, 200)
 brush.noWash()
 
-function bloom(x, y, s, mint, coral) {
-  brush.fill(mint, 68)
-  brush.fillBleed(0.5, "out")
-  brush.fillTexture(0.52, 0.4, false)
-  brush.noStroke()
-  brush.circle(x - 18 * s, y - 12 * s, 40 * s, true)
-  brush.circle(x + 16 * s, y - 10 * s, 36 * s, true)
-  brush.circle(x + 2 * s, y + 16 * s, 38 * s, true)
-  brush.fill(coral, 96)
-  brush.fillBleed(0.32)
-  brush.fillTexture(0.4, 0.3, false)
-  brush.circle(x + 3 * s, y + 1 * s, 15 * s, true)
-}
-
 const blooms = [
-  { x: -168, y: -172, s: 1.05, mint: "#d8ebe0", coral: "#c65648" },
-  { x: 18, y: -198, s: 0.88, mint: "#e4f0e8", coral: "#d46a58" },
-  { x: 176, y: -148, s: 1.08, mint: "#cfe3d6", coral: "#b8443c" },
-  { x: -198, y: -18, s: 0.92, mint: "#d5e8dc", coral: "#c45a4a" },
-  { x: -22, y: -28, s: 1.18, mint: "#e8f2ea", coral: "#d07060" },
-  { x: 158, y: 16, s: 0.96, mint: "#c8ddd0", coral: "#c05040" },
-  { x: -128, y: 128, s: 1.02, mint: "#d2e6d8", coral: "#c85c4c" },
-  { x: 48, y: 158, s: 0.9, mint: "#e2efe6", coral: "#d46850" },
+  { x: -168, y: -168, s: 1.08, mint: "#eaf4ee", coral: "#c65648" },
+  { x: 12, y: -188, s: 0.95, mint: "#f2f8f4", coral: "#d46a58" },
+  { x: 168, y: -142, s: 1.12, mint: "#dceee3", coral: "#b8443c" },
+  { x: -188, y: -16, s: 1.0, mint: "#e4f0e8", coral: "#c45a4a" },
+  { x: -24, y: -22, s: 1.22, mint: "#f4faf6", coral: "#d07060" },
+  { x: 152, y: 18, s: 1.02, mint: "#d8ebe0", coral: "#c05040" },
+  { x: -122, y: 122, s: 1.08, mint: "#e2efe6", coral: "#c85c4c" },
+  { x: 42, y: 154, s: 0.98, mint: "#eef6f0", coral: "#d46850" },
+  { x: 186, y: 128, s: 0.9, mint: "#dceee3", coral: "#b84a42" },
+  { x: 88, y: -78, s: 0.82, mint: "#e8f2ea", coral: "#c85c4c" },
 ]
 
-for (const b of blooms) bloom(b.x, b.y, b.s, b.mint, b.coral)
+for (const b of blooms) {
+  brush.fill(b.mint, 94)
+  brush.fillBleed(0.5, "out")
+  brush.fillTexture(0.5, 0.38, false)
+  brush.noStroke()
+  brush.circle(b.x - 22 * b.s, b.y - 14 * b.s, 50 * b.s, true)
+  brush.circle(b.x + 20 * b.s, b.y - 12 * b.s, 46 * b.s, true)
+  brush.circle(b.x + 2 * b.s, b.y + 18 * b.s, 48 * b.s, true)
+}
 
-brush.fill("#c4a04a", 58)
-brush.fillBleed(0.4)
-brush.fillTexture(0.45, 0.3, false)
+for (const b of blooms) {
+  brush.fill(b.coral, 128)
+  brush.fillBleed(0.3)
+  brush.fillTexture(0.36, 0.28, false)
+  brush.noStroke()
+  brush.circle(b.x + 2 * b.s, b.y + 1 * b.s, 20 * b.s, true)
+}
+
+brush.fill("#c4a04a", 70)
+brush.fillBleed(0.38)
+brush.fillTexture(0.42, 0.28, false)
 brush.noStroke()
-brush.circle(82, 48, 34, true)
-brush.circle(-58, 178, 28, true)
-brush.circle(210, -40, 24, true)
+brush.circle(78, 46, 32, true)
+brush.circle(-52, 176, 26, true)
+brush.circle(214, -36, 22, true)
 
 const twigs = [
   [-220, 70, -148, -86],
@@ -183,10 +185,10 @@ const twigs = [
   [-50, -70, 8, -170],
   [90, -40, 130, -150],
 ]
-brush.set("pen", "#10140e", 0.7)
+brush.set("pen", "#0c100a", 0.75)
 for (const [x1, y1, x2, y2] of twigs) brush.line(x1, y1, x2, y2)
 
-brush.wash("#edc94a", 210)
+brush.wash("#edc94a", 220)
 brush.noStroke()
 const pollen = [
   [-148, -86], [-142, -94], [-156, -78],
@@ -196,7 +198,7 @@ const pollen = [
   [8, -170], [14, -176], [2, -162],
   [130, -150], [136, -156],
 ]
-for (const [x, y] of pollen) brush.circle(x, y, 3.2)
+for (const [x, y] of pollen) brush.circle(x, y, 3.4)
 brush.noWash()
 `,
   },
