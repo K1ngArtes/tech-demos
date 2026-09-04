@@ -157,11 +157,11 @@ for (const b of blooms) {
 }
 
 const heartSpots = [
-  [-22, 12, 6, 118],
-  [24, -14, 5, 82],
-  [8, 24, 6.5, 64],
-  [-26, -16, 4, 48],
-  [28, 14, 5, 92],
+  [-28, 16, 8, 115],
+  [30, -18, 6.5, 76],
+  [10, 30, 9, 58],
+  [-32, -20, 5, 44],
+  [34, 18, 7, 90],
 ]
 
 for (let i = 0; i < blooms.length; i++) {
@@ -177,8 +177,8 @@ for (let i = 0; i < blooms.length; i++) {
 }
 
 const goldSpots = [
-  [14, 4, 4, 150],
-  [-10, 18, 3.2, 110],
+  [22, 6, 5, 100],
+  [-16, 26, 4, 72],
 ]
 for (let i = 0; i < blooms.length; i++) {
   const b = blooms[i]
@@ -193,19 +193,17 @@ for (let i = 0; i < blooms.length; i++) {
 }
 
 const yellows = [
-  { x: 74, y: 38, r: 36 },
-  { x: -52, y: 168, r: 32 },
-  { x: 198, y: -44, r: 28 },
-  { x: -96, y: -64, r: 34 },
-  { x: 36, y: -138, r: 30 },
-  { x: 120, y: 88, r: 26 },
+  { x: 8, y: 210, r: 40 },
+  { x: 220, y: -78, r: 34 },
+  { x: -220, y: 86, r: 36 },
+  { x: 40, y: -210, r: 32 },
 ]
 for (const y of yellows) {
-  brush.wash("#e2c84e", 120)
+  brush.wash("#e2c84e", 78)
   brush.noStroke()
   brush.circle(y.x, y.y, y.r)
-  brush.wash("#f0d878", 85)
-  brush.circle(y.x + 10, y.y - 8, y.r * 0.45)
+  brush.wash("#f0d878", 55)
+  brush.circle(y.x + 12, y.y - 10, y.r * 0.4)
   brush.noWash()
 }
 
