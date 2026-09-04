@@ -60,159 +60,85 @@ brush.line(-150, 40, -168, 88)
     id: "gold",
     name: "Gold",
     blurb: "One yellow hibiscus on black: five petal lobes, a lopsided crimson heart, stamen to the lower left.",
-    code: `// Yellow hibiscus on black — edit a petal angle, then Run
+    code: `// Yellow hibiscus on black — edit a petal offset, then Run
 brush.seed(7)
 brush.angleMode(brush.DEGREES)
 brush.clear("#000000")
 
-const cx = 40
-const cy = 10
-
-function blotch(x, y, r) {
-  const pts = []
-  const n = 9
-  for (let i = 0; i < n; i++) {
-    const a = (i / n) * Math.PI * 2
-    const rr = r * (0.62 + 0.5 * random())
-    pts.push([x + Math.cos(a) * rr, y + Math.sin(a) * rr])
-  }
-  return pts
-}
-
-function petalPts(ang, len, halfW) {
-  const a = (ang * Math.PI) / 180
-  const ca = Math.cos(a)
-  const sa = Math.sin(a)
-  const px = -sa
-  const py = ca
-  const pts = []
-  const n = 18
-  for (const side of [1, -1]) {
-    const seq = []
-    for (let i = 0; i <= n; i++) {
-      const t = i / n
-      let env
-      if (t < 0.9) env = 0.26 + 0.74 * Math.pow(t / 0.9, 0.62)
-      else env = 1 - ((t - 0.9) / 0.1) * 0.42
-      const ruf = 1 + 0.08 * (random() - 0.5)
-      const w = halfW * env * ruf
-      seq.push([
-        cx + ca * len * t + side * px * w,
-        cy + sa * len * t + side * py * w,
-      ])
-    }
-    if (side === 1) pts.push(...seq)
-    else pts.push(...seq.reverse())
-  }
-  return pts
-}
+const cx = 36
+const cy = 8
 
 brush.noStroke()
-brush.wash("#6a7c58", 52)
-brush.polygon(blotch(-170, 12, 88))
-brush.wash("#4e5e44", 36)
-brush.polygon(blotch(-132, 74, 62))
+brush.wash("#5a6c52", 28)
+brush.circle(-178, 4, 70)
+brush.circle(-150, 48, 54)
+brush.circle(-196, 64, 40)
 brush.noWash()
 
 const petals = [
-  { a: 10,  len: 172, w: 80, c: "#f4d44c" },
-  { a: 78,  len: 152, w: 74, c: "#ecd64e" },
-  { a: 154, len: 146, w: 72, c: "#d9b234" },
-  { a: 226, len: 166, w: 78, c: "#f0ce46" },
-  { a: 300, len: 156, w: 76, c: "#e8c43c" },
+  { x: cx + 78, y: cy - 16, r: 96, c: "#f4d44c" },
+  { x: cx + 42, y: cy - 82, r: 88, c: "#ecd64e" },
+  { x: cx - 36, y: cy - 78, r: 84, c: "#e2c440" },
+  { x: cx - 86, y: cy + 6, r: 90, c: "#d9b234" },
+  { x: cx - 38, y: cy + 80, r: 92, c: "#f0ce46" },
 ]
 
 for (const p of petals) {
-  const rad = (p.a * Math.PI) / 180
-  const ca = Math.cos(rad)
-  const sa = Math.sin(rad)
-  const px = -sa
-  const py = ca
+  brush.wash(p.c, 225)
   brush.noStroke()
-  brush.wash(p.c, 230)
-  brush.polygon(petalPts(p.a, p.len, p.w))
-  brush.wash("#c9a028", 42)
-  brush.polygon(petalPts(p.a + 4, p.len * 0.7, p.w * 0.5))
-  brush.wash(p.c, 170)
-  for (let i = 0; i < 5; i++) {
-    const t = 0.58 + i * 0.08
-    const side = i % 2 === 0 ? 1 : -1
-    const jr = (0.55 + 0.35 * random()) * p.w
-    brush.circle(
-      cx + ca * p.len * t + side * px * jr,
-      cy + sa * p.len * t + side * py * jr,
-      10 + random() * 9,
-    )
-  }
-  brush.noWash()
-  brush.set("crayon", "#b89028", 1.6)
-  brush.line(
-    cx + ca * p.len * 0.28,
-    cy + sa * p.len * 0.28,
-    cx + ca * p.len * 0.68 + px * 6,
-    cy + sa * p.len * 0.68 + py * 6,
-  )
+  brush.circle(p.x, p.y, p.r)
+  brush.circle((p.x + cx) / 2, (p.y + cy) / 2, p.r * 0.58)
+  brush.wash("#c9a028", 36)
+  brush.circle((p.x * 2 + cx) / 3, (p.y * 2 + cy) / 3, p.r * 0.34)
 }
+brush.noWash()
 
-brush.set("pen", "#e2d4b4", 0.45)
-const hairs = [
-  [cx + 18, cy - 22, cx + 92, cy - 148],
-  [cx + 28, cy + 4, cx + 164, cy + 18],
-  [cx - 16, cy - 18, cx - 70, cy - 150],
-]
-for (const [x1, y1, x2, y2] of hairs) {
-  let x = x1
-  let y = y1
-  for (let i = 1; i <= 4; i++) {
-    const t = i / 4
-    const nx = x1 + (x2 - x1) * t + random(-4, 4)
-    const ny = y1 + (y2 - y1) * t + random(-4, 4)
-    brush.line(x, y, nx, ny)
-    x = nx
-    y = ny
-  }
-}
-
+brush.wash("#e07030", 80)
 brush.noStroke()
-brush.wash("#e07030", 88)
-brush.polygon(blotch(cx - 2, cy + 6, 28))
-brush.wash("#d45a28", 60)
-brush.polygon(blotch(cx - 16, cy + 18, 16))
+brush.circle(cx - 4, cy + 6, 28)
+brush.wash("#d45a28", 55)
+brush.circle(cx - 14, cy + 14, 16)
+brush.noWash()
 
 const hearts = [
-  [-10, 8, 24, 210, "#c23028"],
-  [20, -8, 16, 135, "#9a1c18"],
-  [-26, -4, 13, 75, "#d44838"],
-  [6, 22, 18, 155, "#b42822"],
-  [28, 12, 10, 68, "#e06048"],
-  [-6, -18, 12, 90, "#8a1814"],
-  [2, 4, 15, 115, "#6e1010"],
-  [-20, 20, 9, 55, "#a02820"],
+  [-6, 4, 20, 210, "#c23028"],
+  [10, 2, 16, 175, "#b42822"],
+  [2, 14, 15, 150, "#9a1c18"],
+  [-14, 8, 12, 95, "#d44838"],
+  [12, 12, 10, 80, "#8a1814"],
+  [-4, -8, 11, 110, "#6e1010"],
+  [8, -6, 8, 70, "#e06048"],
+  [-10, -4, 7, 50, "#a02820"],
 ]
 for (const [dx, dy, r, a, c] of hearts) {
   brush.wash(c, a)
-  brush.polygon(blotch(cx + dx, cy + dy, r))
+  brush.noStroke()
+  brush.circle(cx + dx, cy + dy, r)
 }
 brush.noWash()
 
-brush.wash("#140404", 220)
+brush.wash("#120404", 230)
 brush.noStroke()
-brush.polygon(blotch(cx - 1, cy + 5, 8))
-brush.polygon(blotch(cx + 5, cy + 1, 5))
+brush.circle(cx, cy + 4, 8)
+brush.circle(cx + 5, cy + 1, 5)
 brush.noWash()
 
-brush.set("crayon", "#c47818", 2.6)
-brush.line(cx - 8, cy + 18, cx - 50, cy + 70)
-brush.line(cx - 50, cy + 70, cx - 108, cy + 126)
-brush.set("marker", "#e89428", 1.15)
-brush.line(cx - 12, cy + 22, cx - 112, cy + 132)
+brush.set("2H", "#d8c898", 0.55)
+brush.line(cx + 36, cy - 40, cx + 70, cy - 118)
+brush.line(cx + 48, cy + 6, cx + 132, cy + 14)
+brush.line(cx - 30, cy - 36, cx - 58, cy - 112)
+
+brush.set("crayon", "#c47818", 2.5)
+brush.line(cx - 10, cy + 20, cx - 48, cy + 68)
+brush.line(cx - 48, cy + 68, cx - 102, cy + 122)
+brush.set("marker", "#e89428", 1.1)
+brush.line(cx - 16, cy + 26, cx - 106, cy + 128)
 brush.wash("#e07020", 200)
 brush.noStroke()
-brush.circle(cx - 114, cy + 136, 5)
-for (const t of [0.62, 0.78, 0.9]) {
-  brush.wash("#d45a20", 160)
-  brush.circle(cx - 8 - 106 * t, cy + 18 + 118 * t, 3)
-}
+brush.circle(cx - 108, cy + 132, 4.5)
+brush.wash("#d45a20", 150)
+brush.circle(cx - 70, cy + 90, 3)
+brush.circle(cx - 90, cy + 112, 2.8)
 brush.noWash()
 `,
   },
