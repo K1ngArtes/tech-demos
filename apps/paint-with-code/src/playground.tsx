@@ -38,18 +38,23 @@ export function Playground() {
   const [painted, setPainted] = useState(false)
   const hostRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const paintGen = useRef(0)
 
   function paint(source: string) {
+    const id = ++paintGen.current
     setBusy(true)
     setError(null)
     window.setTimeout(() => {
+      if (id !== paintGen.current) return
       try {
         runSketch(source)
+        if (id !== paintGen.current) return
         setPainted(true)
       } catch (caught) {
+        if (id !== paintGen.current) return
         setError(errorMessage(caught))
       } finally {
-        setBusy(false)
+        if (id === paintGen.current) setBusy(false)
       }
     }, 20)
   }
@@ -65,6 +70,7 @@ export function Playground() {
     }
     paint(SAMPLES.hibiscus.code)
     return () => {
+      paintGen.current += 1
       canvasRef.current?.remove()
       canvasRef.current = null
     }

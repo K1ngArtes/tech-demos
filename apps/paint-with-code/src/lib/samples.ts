@@ -46,7 +46,7 @@ brush.circle(-132, 118, 42, true)
 
 brush.set("marker", "#f0d2a8", 1.5)
 brush.line(2, 10, 10, -108)
-brush.set("marker2", "#f6e7c3", 0.85)
+brush.set("crayon", "#f6e7c3", 0.85)
 for (let i = 0; i < 8; i++) {
   const a = (-80 + i * 18) * Math.PI / 180
   brush.line(8, -100, 8 + Math.cos(a) * 26, -100 + Math.sin(a) * 12)
