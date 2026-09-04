@@ -1,4 +1,4 @@
-export type SampleId = "hibiscus" | "leaves" | "wildflowers"
+export type SampleId = "hibiscus" | "leaves" | "wildflowers" | "meadow"
 
 export type Sample = {
   id: SampleId
@@ -122,6 +122,89 @@ brush.fillBleed(0.2)
 brush.circle(0, 170, 80)
 `,
   },
+  meadow: {
+    id: "meadow",
+    name: "Meadow",
+    blurb: "A dense mint-and-coral field on a dark wash — ink twigs and pollen dots.",
+    code: `// Night meadow — edit a bloom's mint/coral, then Run
+brush.seed(9)
+brush.angleMode(brush.DEGREES)
+brush.clear("#1a2614")
+
+brush.wash("#24351c", 90)
+brush.noStroke()
+brush.circle(-90, 70, 210)
+brush.wash("#121c0e", 100)
+brush.circle(130, -90, 190)
+brush.wash("#2a3e22", 70)
+brush.circle(40, 170, 150)
+brush.noWash()
+
+function bloom(x, y, s, mint, coral) {
+  brush.fill(mint, 68)
+  brush.fillBleed(0.5, "out")
+  brush.fillTexture(0.52, 0.4, false)
+  brush.noStroke()
+  brush.circle(x - 18 * s, y - 12 * s, 40 * s, true)
+  brush.circle(x + 16 * s, y - 10 * s, 36 * s, true)
+  brush.circle(x + 2 * s, y + 16 * s, 38 * s, true)
+  brush.fill(coral, 96)
+  brush.fillBleed(0.32)
+  brush.fillTexture(0.4, 0.3, false)
+  brush.circle(x + 3 * s, y + 1 * s, 15 * s, true)
 }
 
-export const SAMPLE_ORDER: SampleId[] = ["hibiscus", "leaves", "wildflowers"]
+const blooms = [
+  { x: -168, y: -172, s: 1.05, mint: "#d8ebe0", coral: "#c65648" },
+  { x: 18, y: -198, s: 0.88, mint: "#e4f0e8", coral: "#d46a58" },
+  { x: 176, y: -148, s: 1.08, mint: "#cfe3d6", coral: "#b8443c" },
+  { x: -198, y: -18, s: 0.92, mint: "#d5e8dc", coral: "#c45a4a" },
+  { x: -22, y: -28, s: 1.18, mint: "#e8f2ea", coral: "#d07060" },
+  { x: 158, y: 16, s: 0.96, mint: "#c8ddd0", coral: "#c05040" },
+  { x: -128, y: 128, s: 1.02, mint: "#d2e6d8", coral: "#c85c4c" },
+  { x: 48, y: 158, s: 0.9, mint: "#e2efe6", coral: "#d46850" },
+]
+
+for (const b of blooms) bloom(b.x, b.y, b.s, b.mint, b.coral)
+
+brush.fill("#c4a04a", 58)
+brush.fillBleed(0.4)
+brush.fillTexture(0.45, 0.3, false)
+brush.noStroke()
+brush.circle(82, 48, 34, true)
+brush.circle(-58, 178, 28, true)
+brush.circle(210, -40, 24, true)
+
+const twigs = [
+  [-220, 70, -148, -86],
+  [-70, 220, -28, 70],
+  [36, 230, 72, 92],
+  [150, 90, 196, -18],
+  [-50, -70, 8, -170],
+  [90, -40, 130, -150],
+]
+brush.set("pen", "#10140e", 0.7)
+for (const [x1, y1, x2, y2] of twigs) brush.line(x1, y1, x2, y2)
+
+brush.wash("#edc94a", 210)
+brush.noStroke()
+const pollen = [
+  [-148, -86], [-142, -94], [-156, -78],
+  [-28, 70], [-22, 62], [-34, 78],
+  [72, 92], [78, 84], [66, 98],
+  [196, -18], [202, -26], [188, -10],
+  [8, -170], [14, -176], [2, -162],
+  [130, -150], [136, -156],
+]
+for (const [x, y] of pollen) brush.circle(x, y, 3.2)
+brush.noWash()
+`,
+  },
+}
+
+export const SAMPLE_ORDER: SampleId[] = [
+  "hibiscus",
+  "leaves",
+  "wildflowers",
+  "meadow",
+]

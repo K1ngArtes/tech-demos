@@ -131,7 +131,8 @@ export function Playground() {
               <code className="font-mono text-xs">height</code> are{" "}
               {CANVAS_SIZE}. Use{" "}
               <code className="font-mono text-xs">brush.fill</code> for
-              watercolor bleed — not native canvas fills.
+              watercolor bleed. Stroke brushes: marker, charcoal, pen, HB,
+              crayon.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -139,7 +140,7 @@ export function Playground() {
               value={sampleId}
               onValueChange={(value) => applySample(value as SampleId)}
             >
-              <TabsList className="w-full">
+              <TabsList className="h-auto w-full flex-wrap">
                 {SAMPLE_ORDER.map((id) => (
                   <TabsTrigger key={id} value={id} className="flex-1">
                     {SAMPLES[id].name}
