@@ -129,76 +129,71 @@ brush.circle(0, 170, 80)
     code: `// Night meadow — edit a bloom's mint/coral, then Run
 brush.seed(9)
 brush.angleMode(brush.DEGREES)
-brush.clear("#162014")
-
-brush.wash("#1e2e18", 110)
-brush.noStroke()
-brush.circle(-80, 50, 230)
-brush.wash("#0e160c", 120)
-brush.circle(140, -80, 200)
-brush.noWash()
+brush.clear("#141c10")
 
 const blooms = [
-  { x: -168, y: -168, s: 1.08, mint: "#eaf4ee", coral: "#c65648" },
-  { x: 12, y: -188, s: 0.95, mint: "#f2f8f4", coral: "#d46a58" },
-  { x: 168, y: -142, s: 1.12, mint: "#dceee3", coral: "#b8443c" },
-  { x: -188, y: -16, s: 1.0, mint: "#e4f0e8", coral: "#c45a4a" },
-  { x: -24, y: -22, s: 1.22, mint: "#f4faf6", coral: "#d07060" },
-  { x: 152, y: 18, s: 1.02, mint: "#d8ebe0", coral: "#c05040" },
-  { x: -122, y: 122, s: 1.08, mint: "#e2efe6", coral: "#c85c4c" },
-  { x: 42, y: 154, s: 0.98, mint: "#eef6f0", coral: "#d46850" },
-  { x: 186, y: 128, s: 0.9, mint: "#dceee3", coral: "#b84a42" },
-  { x: 88, y: -78, s: 0.82, mint: "#e8f2ea", coral: "#c85c4c" },
+  { x: -170, y: -168, s: 1.16, mint: "#eaf4ee", coral: "#c65648" },
+  { x: -18, y: -186, s: 1.08, mint: "#f4faf6", coral: "#d46a58" },
+  { x: 150, y: -156, s: 1.2, mint: "#e2efe6", coral: "#b8443c" },
+  { x: -186, y: -22, s: 1.12, mint: "#e8f2ea", coral: "#c45a4a" },
+  { x: -12, y: -18, s: 1.32, mint: "#f6fbf8", coral: "#d07060" },
+  { x: 158, y: 8, s: 1.12, mint: "#dceee3", coral: "#c05040" },
+  { x: -158, y: 118, s: 1.16, mint: "#e4f0e8", coral: "#c85c4c" },
+  { x: 22, y: 148, s: 1.1, mint: "#eef6f0", coral: "#d46850" },
+  { x: 172, y: 128, s: 1.02, mint: "#e0eee4", coral: "#b84a42" },
+  { x: 82, y: -88, s: 1.0, mint: "#eaf4ee", coral: "#c85c4c" },
+  { x: -88, y: 52, s: 1.04, mint: "#f0f7f2", coral: "#c45a4a" },
+  { x: 92, y: 52, s: 0.98, mint: "#e6f2ea", coral: "#d46a58" },
 ]
 
 for (const b of blooms) {
-  brush.fill(b.mint, 94)
-  brush.fillBleed(0.5, "out")
-  brush.fillTexture(0.5, 0.38, false)
+  brush.fill(b.mint, 118)
+  brush.fillBleed(0.46, "out")
+  brush.fillTexture(0.48, 0.36, false)
   brush.noStroke()
-  brush.circle(b.x - 22 * b.s, b.y - 14 * b.s, 50 * b.s, true)
-  brush.circle(b.x + 20 * b.s, b.y - 12 * b.s, 46 * b.s, true)
-  brush.circle(b.x + 2 * b.s, b.y + 18 * b.s, 48 * b.s, true)
+  brush.circle(b.x - 24 * b.s, b.y - 16 * b.s, 62 * b.s, true)
+  brush.circle(b.x + 22 * b.s, b.y - 14 * b.s, 58 * b.s, true)
+  brush.circle(b.x + 2 * b.s, b.y + 20 * b.s, 60 * b.s, true)
 }
 
 for (const b of blooms) {
-  brush.fill(b.coral, 128)
-  brush.fillBleed(0.3)
-  brush.fillTexture(0.36, 0.28, false)
+  brush.wash(b.coral, 165)
   brush.noStroke()
-  brush.circle(b.x + 2 * b.s, b.y + 1 * b.s, 20 * b.s, true)
+  brush.circle(b.x + 2 * b.s, b.y + 2 * b.s, 18 * b.s)
+  brush.noWash()
+  brush.set("marker", b.coral, 1.7)
+  brush.line(b.x - 10 * b.s, b.y, b.x + 12 * b.s, b.y - 7 * b.s)
 }
 
-brush.fill("#c4a04a", 70)
-brush.fillBleed(0.38)
-brush.fillTexture(0.42, 0.28, false)
+brush.fill("#c4a04a", 78)
+brush.fillBleed(0.36)
+brush.fillTexture(0.4, 0.26, false)
 brush.noStroke()
-brush.circle(78, 46, 32, true)
-brush.circle(-52, 176, 26, true)
-brush.circle(214, -36, 22, true)
+brush.circle(70, 40, 30, true)
+brush.circle(-48, 172, 24, true)
 
 const twigs = [
-  [-220, 70, -148, -86],
-  [-70, 220, -28, 70],
-  [36, 230, 72, 92],
-  [150, 90, 196, -18],
-  [-50, -70, 8, -170],
-  [90, -40, 130, -150],
+  [-230, 80, -150, -90],
+  [-78, 230, -30, 64],
+  [32, 236, 74, 88],
+  [148, 96, 200, -22],
+  [-56, -74, 10, -176],
+  [86, -44, 134, -154],
 ]
-brush.set("pen", "#0c100a", 0.75)
+brush.set("pen", "#0a0e08", 0.8)
 for (const [x1, y1, x2, y2] of twigs) brush.line(x1, y1, x2, y2)
 
-brush.wash("#edc94a", 220)
+brush.wash("#edc94a", 230)
 brush.noStroke()
 const pollen = [
-  [-148, -86], [-142, -94], [-156, -78],
-  [-28, 70], [-22, 62], [-34, 78],
-  [72, 92], [78, 84], [66, 98],
-  [196, -18], [202, -26], [188, -10],
-  [8, -170], [14, -176], [2, -162],
-  [130, -150], [136, -156],
+  [-150, -90], [-144, -98], [-158, -82],
+  [-30, 64], [-24, 56], [-36, 72],
+  [74, 88], [80, 80], [68, 94],
+  [200, -22], [206, -30], [192, -14],
+  [10, -176], [16, -182], [4, -168],
+  [134, -154], [140, -160],
 ]
-for (const [x, y] of pollen) brush.circle(x, y, 3.4)
+for (const [x, y] of pollen) brush.circle(x, y, 3.5)
 brush.noWash()
 `,
   },
