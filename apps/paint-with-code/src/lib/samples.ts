@@ -157,11 +157,11 @@ for (const b of blooms) {
 }
 
 const heartSpots = [
-  [-16, 8, 6.5, 122],
-  [18, -10, 5.5, 86],
-  [6, 18, 7, 68],
-  [-20, -12, 4.5, 50],
-  [22, 10, 5, 96],
+  [-22, 12, 6, 118],
+  [24, -14, 5, 82],
+  [8, 24, 6.5, 64],
+  [-26, -16, 4, 48],
+  [28, 14, 5, 92],
 ]
 
 for (let i = 0; i < blooms.length; i++) {
@@ -176,22 +176,36 @@ for (let i = 0; i < blooms.length; i++) {
   brush.noWash()
 }
 
+const goldSpots = [
+  [14, 4, 4, 150],
+  [-10, 18, 3.2, 110],
+]
+for (let i = 0; i < blooms.length; i++) {
+  const b = blooms[i]
+  const ca = Math.cos(i * 0.55 + 0.8)
+  const sa = Math.sin(i * 0.55 + 0.8)
+  for (const [dx, dy, r, a] of goldSpots) {
+    brush.wash("#e8cc58", a)
+    brush.noStroke()
+    brush.circle(b.x + (dx * ca - dy * sa) * b.s, b.y + (dx * sa + dy * ca) * b.s, r * b.s)
+  }
+  brush.noWash()
+}
+
 const yellows = [
-  { x: 74, y: 38, r: 42, c: "#e2c84e" },
-  { x: -52, y: 168, r: 36, c: "#d4b446" },
-  { x: 198, y: -44, r: 32, c: "#ebcf62" },
-  { x: -96, y: -64, r: 38, c: "#d8bc52" },
-  { x: 36, y: -138, r: 34, c: "#e6cc5c" },
-  { x: 120, y: 88, r: 30, c: "#d0ae42" },
+  { x: 74, y: 38, r: 36 },
+  { x: -52, y: 168, r: 32 },
+  { x: 198, y: -44, r: 28 },
+  { x: -96, y: -64, r: 34 },
+  { x: 36, y: -138, r: 30 },
+  { x: 120, y: 88, r: 26 },
 ]
 for (const y of yellows) {
-  brush.fill(y.c, 96)
-  brush.fillBleed(0.42)
-  brush.fillTexture(0.4, 0.28, false)
+  brush.wash("#e2c84e", 120)
   brush.noStroke()
-  brush.circle(y.x, y.y, y.r, true)
-  brush.wash(y.c, 100)
-  brush.circle(y.x + 8, y.y - 6, y.r * 0.42)
+  brush.circle(y.x, y.y, y.r)
+  brush.wash("#f0d878", 85)
+  brush.circle(y.x + 10, y.y - 8, y.r * 0.45)
   brush.noWash()
 }
 
