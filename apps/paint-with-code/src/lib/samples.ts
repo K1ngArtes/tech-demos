@@ -1,4 +1,4 @@
-export type SampleId = "hibiscus" | "leaves" | "wildflowers" | "meadow"
+export type SampleId = "hibiscus" | "gold" | "leaves" | "wildflowers" | "meadow"
 
 export type Sample = {
   id: SampleId
@@ -54,6 +54,110 @@ for (let i = 0; i < 8; i++) {
 
 brush.set("charcoal", "#2f3d2a", 0.7)
 brush.line(-150, 40, -168, 88)
+`,
+  },
+  gold: {
+    id: "gold",
+    name: "Gold",
+    blurb: "One yellow hibiscus on black: five lobes, a scattered crimson heart, thin stamen.",
+    code: `// Yellow hibiscus on black — edit a petal offset, then Run
+brush.seed(7)
+brush.angleMode(brush.DEGREES)
+brush.clear("#000000")
+
+const cx = 36
+const cy = 8
+
+brush.wash("#3d4f3a", 36)
+brush.noStroke()
+brush.circle(-188, -18, 108)
+brush.wash("#2a3828", 26)
+brush.circle(-158, 86, 78)
+brush.noWash()
+
+const petals = [
+  { a: 18,  len: 142, w: 76, c: "#f4d44c" },
+  { a: 80,  len: 122, w: 68, c: "#e8c43c" },
+  { a: 150, len: 116, w: 64, c: "#d7b034" },
+  { a: 214, len: 136, w: 74, c: "#f0ce46" },
+  { a: 294, len: 126, w: 70, c: "#ecd64e" },
+]
+
+for (const p of petals) {
+  const rad = (p.a * Math.PI) / 180
+  const ca = Math.cos(rad)
+  const sa = Math.sin(rad)
+  brush.wash(p.c, 205)
+  brush.noStroke()
+  brush.circle(cx + ca * p.len * 0.3, cy + sa * p.len * 0.3, p.w * 0.58)
+  brush.circle(cx + ca * p.len * 0.56, cy + sa * p.len * 0.56, p.w * 0.96)
+  brush.circle(cx + ca * p.len * 0.8, cy + sa * p.len * 0.8, p.w * 0.68)
+  brush.set("pastel", p.c, 3.2)
+  brush.line(cx + ca * 18, cy + sa * 18, cx + ca * p.len * 0.88, cy + sa * p.len * 0.88)
+  const px = -sa
+  const py = ca
+  brush.set("crayon", p.c, 2.4)
+  brush.line(cx + px * 16, cy + py * 16, cx + ca * p.len * 0.78 + px * 20, cy + sa * p.len * 0.78 + py * 20)
+}
+brush.noWash()
+
+brush.wash("#c9a028", 72)
+brush.noStroke()
+brush.circle(cx - 8, cy + 10, 34)
+brush.wash("#e07030", 88)
+brush.circle(cx + 4, cy + 2, 26)
+brush.wash("#d45a28", 58)
+brush.circle(cx - 14, cy + 16, 16)
+brush.noWash()
+
+const hearts = [
+  [-24, 12, 12, 220, "#c23028"],
+  [20, -16, 9, 155, "#a01c18"],
+  [6, 26, 11, 95, "#8a1814"],
+  [-30, -14, 7, 78, "#d44838"],
+  [28, 14, 10, 185, "#b42822"],
+  [-8, -4, 8, 130, "#6e1010"],
+  [14, 8, 6, 68, "#e06048"],
+  [-18, 22, 5, 48, "#9a2420"],
+]
+for (const [dx, dy, r, a, c] of hearts) {
+  brush.wash(c, a)
+  brush.noStroke()
+  brush.circle(cx + dx, cy + dy, r)
+}
+brush.noWash()
+
+brush.wash("#120606", 230)
+brush.noStroke()
+brush.circle(cx + 2, cy + 4, 11)
+brush.noWash()
+
+brush.set("crayon", "#e8b43a", 2.2)
+brush.line(cx - 4, cy + 10, cx - 100, cy + 84)
+brush.set("marker", "#f4d060", 1.05)
+brush.line(cx - 8, cy + 12, cx - 94, cy + 78)
+brush.wash("#f0c848", 200)
+brush.noStroke()
+brush.circle(cx - 100, cy + 84, 4.5)
+for (const t of [0.4, 0.62, 0.82]) {
+  brush.wash("#e8a030", 150)
+  brush.circle(cx - 4 - 96 * t, cy + 10 + 74 * t, 3)
+}
+brush.noWash()
+
+brush.set("pen", "#f2ead4", 0.42)
+const filaments = [
+  [cx - 8, cy - 6, cx - 44, cy - 86],
+  [cx + 10, cy - 4, cx + 64, cy - 72],
+  [cx + 12, cy + 8, cx + 92, cy + 16],
+  [cx + 2, cy + 14, cx + 36, cy + 82],
+  [cx - 10, cy + 12, cx - 66, cy + 52],
+  [cx + 8, cy - 8, cx + 24, cy - 96],
+]
+for (const [x1, y1, x2, y2] of filaments) brush.line(x1, y1, x2, y2)
+brush.set("2H", "#c9a040", 0.48)
+brush.line(cx + 2, cy, cx + 50, cy - 6)
+brush.line(cx, cy + 4, cx - 28, cy + 44)
 `,
   },
   leaves: {
@@ -236,6 +340,7 @@ brush.noWash()
 
 export const SAMPLE_ORDER: SampleId[] = [
   "hibiscus",
+  "gold",
   "leaves",
   "wildflowers",
   "meadow",

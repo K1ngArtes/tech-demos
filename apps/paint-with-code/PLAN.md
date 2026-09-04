@@ -9,7 +9,7 @@ A one-user playground where the artefact is editable p5.brush JavaScript: change
 In:
 
 - Live editor + canvas on one screen
-- A few built-in watercolor sketches (hibiscus / leaves / wildflowers / meadow field)
+- A few built-in watercolor sketches (peach hibiscus / gold hibiscus / leaves / wildflowers / meadow field)
 - Run, reset to the sample, download PNG
 - Short explainer that the code is the artefact — not a prompt
 - Real `p5.brush` so fills bleed like watercolor, not flat canvas fills
