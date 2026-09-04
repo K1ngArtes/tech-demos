@@ -59,7 +59,7 @@ brush.line(-150, 40, -168, 88)
   gold: {
     id: "gold",
     name: "Gold",
-    blurb: "One yellow hibiscus on black: five petal lobes, a lopsided crimson heart, stamen to the lower left.",
+    blurb: "One yellow hibiscus on black: five overlapping lobes, a packed crimson heart, stamen to the lower left.",
     code: `// Yellow hibiscus on black — edit a petal offset, then Run
 brush.seed(7)
 brush.angleMode(brush.DEGREES)
@@ -101,14 +101,15 @@ brush.circle(cx - 14, cy + 14, 16)
 brush.noWash()
 
 const hearts = [
-  [-6, 4, 20, 210, "#c23028"],
-  [10, 2, 16, 175, "#b42822"],
-  [2, 14, 15, 150, "#9a1c18"],
-  [-14, 8, 12, 95, "#d44838"],
-  [12, 12, 10, 80, "#8a1814"],
-  [-4, -8, 11, 110, "#6e1010"],
-  [8, -6, 8, 70, "#e06048"],
-  [-10, -4, 7, 50, "#a02820"],
+  [-8, 6, 26, 215, "#c23028"],
+  [12, 2, 20, 180, "#b42822"],
+  [2, 16, 18, 155, "#9a1c18"],
+  [-18, 10, 14, 100, "#d44838"],
+  [16, 14, 12, 85, "#8a1814"],
+  [-6, -10, 13, 115, "#6e1010"],
+  [10, -8, 10, 75, "#e06048"],
+  [-14, -4, 9, 55, "#a02820"],
+  [22, 6, 8, 60, "#c44838"],
 ]
 for (const [dx, dy, r, a, c] of hearts) {
   brush.wash(c, a)
