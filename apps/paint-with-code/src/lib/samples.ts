@@ -1,4 +1,4 @@
-export type SampleId = "hibiscus" | "leaves" | "wildflowers" | "meadow"
+export type SampleId = "hibiscus" | "gold" | "leaves" | "wildflowers" | "meadow"
 
 export type Sample = {
   id: SampleId
@@ -54,6 +54,93 @@ for (let i = 0; i < 8; i++) {
 
 brush.set("charcoal", "#2f3d2a", 0.7)
 brush.line(-150, 40, -168, 88)
+`,
+  },
+  gold: {
+    id: "gold",
+    name: "Gold",
+    blurb: "One yellow hibiscus on black: five overlapping lobes, a packed crimson heart, stamen to the lower left.",
+    code: `// Yellow hibiscus on black — edit a petal offset, then Run
+brush.seed(7)
+brush.angleMode(brush.DEGREES)
+brush.clear("#000000")
+
+const cx = 36
+const cy = 8
+
+brush.noStroke()
+brush.wash("#5a6c52", 28)
+brush.circle(-178, 4, 70)
+brush.circle(-150, 48, 54)
+brush.circle(-196, 64, 40)
+brush.noWash()
+
+const petals = [
+  { x: cx + 78, y: cy - 16, r: 96, c: "#f4d44c" },
+  { x: cx + 42, y: cy - 82, r: 88, c: "#ecd64e" },
+  { x: cx - 36, y: cy - 78, r: 84, c: "#e2c440" },
+  { x: cx - 86, y: cy + 6, r: 90, c: "#d9b234" },
+  { x: cx - 38, y: cy + 80, r: 92, c: "#f0ce46" },
+]
+
+for (const p of petals) {
+  brush.wash(p.c, 225)
+  brush.noStroke()
+  brush.circle(p.x, p.y, p.r)
+  brush.circle((p.x + cx) / 2, (p.y + cy) / 2, p.r * 0.58)
+  brush.wash("#c9a028", 36)
+  brush.circle((p.x * 2 + cx) / 3, (p.y * 2 + cy) / 3, p.r * 0.34)
+}
+brush.noWash()
+
+brush.wash("#e07030", 80)
+brush.noStroke()
+brush.circle(cx - 4, cy + 6, 28)
+brush.wash("#d45a28", 55)
+brush.circle(cx - 14, cy + 14, 16)
+brush.noWash()
+
+const hearts = [
+  [-8, 6, 26, 215, "#c23028"],
+  [12, 2, 20, 180, "#b42822"],
+  [2, 16, 18, 155, "#9a1c18"],
+  [-18, 10, 14, 100, "#d44838"],
+  [16, 14, 12, 85, "#8a1814"],
+  [-6, -10, 13, 115, "#6e1010"],
+  [10, -8, 10, 75, "#e06048"],
+  [-14, -4, 9, 55, "#a02820"],
+  [22, 6, 8, 60, "#c44838"],
+]
+for (const [dx, dy, r, a, c] of hearts) {
+  brush.wash(c, a)
+  brush.noStroke()
+  brush.circle(cx + dx, cy + dy, r)
+}
+brush.noWash()
+
+brush.wash("#120404", 230)
+brush.noStroke()
+brush.circle(cx, cy + 4, 8)
+brush.circle(cx + 5, cy + 1, 5)
+brush.noWash()
+
+brush.set("2H", "#d8c898", 0.55)
+brush.line(cx + 36, cy - 40, cx + 70, cy - 118)
+brush.line(cx + 48, cy + 6, cx + 132, cy + 14)
+brush.line(cx - 30, cy - 36, cx - 58, cy - 112)
+
+brush.set("crayon", "#c47818", 2.5)
+brush.line(cx - 10, cy + 20, cx - 48, cy + 68)
+brush.line(cx - 48, cy + 68, cx - 102, cy + 122)
+brush.set("marker", "#e89428", 1.1)
+brush.line(cx - 16, cy + 26, cx - 106, cy + 128)
+brush.wash("#e07020", 200)
+brush.noStroke()
+brush.circle(cx - 108, cy + 132, 4.5)
+brush.wash("#d45a20", 150)
+brush.circle(cx - 70, cy + 90, 3)
+brush.circle(cx - 90, cy + 112, 2.8)
+brush.noWash()
 `,
   },
   leaves: {
@@ -236,6 +323,7 @@ brush.noWash()
 
 export const SAMPLE_ORDER: SampleId[] = [
   "hibiscus",
+  "gold",
   "leaves",
   "wildflowers",
   "meadow",
