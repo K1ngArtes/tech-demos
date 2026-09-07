@@ -1,18 +1,5 @@
 {
-  "proposed": [
-    {
-      "id": "2094719194302706136",
-      "title": "Lieflat Charts",
-      "url": "https://x.com/Zhiyu333/status/2094719194302706136",
-      "date": "2026-09-02"
-    },
-    {
-      "id": "2095854071580156338",
-      "title": "GPT-6 Astra",
-      "url": "https://x.com/gregisenberg/status/2095854071580156338",
-      "date": "2026-09-07"
-    }
-  ],
+  "proposed": [],
   "skipped": [
     {
       "id": "2094457600259842065",
@@ -25,6 +12,12 @@
       "title": "Grok Voice Agent API",
       "url": "https://x.com/jonnylangefeld/status/2088280038877901290",
       "date": "2026-09-04"
+    },
+    {
+      "id": "2095854071580156338",
+      "title": "GPT-6 Astra",
+      "url": "https://x.com/gregisenberg/status/2095854071580156338",
+      "date": "2026-09-07"
     }
   ],
   "built": [
@@ -34,6 +27,13 @@
       "url": "https://x.com/kickingkeys/status/2091570990048276897",
       "date": "2026-09-04",
       "pr": "https://github.com/K1ngArtes/tech-demos/pull/2"
+    },
+    {
+      "id": "2094719194302706136",
+      "title": "Lieflat Charts",
+      "url": "https://x.com/Zhiyu333/status/2094719194302706136",
+      "date": "2026-09-02",
+      "pr": "https://github.com/K1ngArtes/tech-demos/pull/1"
     }
   ]
 }
