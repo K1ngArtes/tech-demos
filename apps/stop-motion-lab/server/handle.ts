@@ -1,4 +1,9 @@
-import { MODEL_FLARE, MODEL_SUNBURST } from "../src/lib/frames.ts"
+import {
+  IMAGE_MODELS,
+  MODEL_FLARE,
+  MODEL_SUNBURST,
+  parseImageModel,
+} from "../src/lib/frames.ts"
 import { apiMode, resolveEnv, type RuntimeEnv } from "./env.ts"
 import { editFrame, generateFrame } from "./openai.ts"
 
@@ -24,10 +29,11 @@ export async function handleApi(
       mode,
       model: MODEL_FLARE,
       sunburst: MODEL_SUNBURST,
+      models: [...IMAGE_MODELS],
       note:
         mode === "stub"
           ? "UI-with-stub: OPENAI_API_KEY missing or STUB_OPENAI=1. Real generate/edit wiring is present."
-          : "Live Flare generate/edit.",
+          : "Live generate/edit. Pick Flare or Sunburst in the UI.",
     })
   }
 
@@ -37,10 +43,10 @@ export async function handleApi(
 
   try {
     if (path === "/api/generate") {
-      const body = (await request.json()) as { prompt?: string }
+      const body = (await request.json()) as { prompt?: string; model?: unknown }
       const prompt = body.prompt?.trim()
       if (!prompt) return json({ error: "Subject prompt is required" }, 400)
-      return json(await generateFrame(prompt, runtime))
+      return json(await generateFrame(prompt, runtime, parseImageModel(body.model)))
     }
 
     if (path === "/api/edit") {
@@ -49,6 +55,7 @@ export async function handleApi(
         motionPrompt?: string
         frameIndex?: number
         frameCount?: number
+        model?: unknown
       }
       const motionPrompt = body.motionPrompt?.trim()
       if (!motionPrompt) return json({ error: "Motion prompt is required" }, 400)
@@ -59,6 +66,7 @@ export async function handleApi(
             motionPrompt,
             frameIndex: body.frameIndex,
             frameCount: body.frameCount,
+            model: body.model,
           },
           runtime,
         ),

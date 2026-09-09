@@ -5,8 +5,11 @@ import {
   FRAME_DEFAULT,
   FRAME_MAX,
   FRAME_MIN,
+  MODEL_FLARE,
+  MODEL_SUNBURST,
   parseFrameCount,
   parseFrameIndex,
+  parseImageModel,
 } from "./frames.ts"
 
 describe("clampFrameCount", () => {
@@ -37,5 +40,19 @@ describe("parseFrameIndex", () => {
   test("must land inside the sequence", () => {
     expect(parseFrameIndex(2, 8)).toBe(2)
     expect(() => parseFrameIndex(9, 8)).toThrow("Invalid frame index")
+  })
+})
+
+describe("parseImageModel", () => {
+  test("defaults omitted values to Flare", () => {
+    expect(parseImageModel(undefined)).toBe(MODEL_FLARE)
+    expect(parseImageModel("")).toBe(MODEL_FLARE)
+  })
+
+  test("allowlists Flare and Sunburst only", () => {
+    expect(parseImageModel(MODEL_FLARE)).toBe(MODEL_FLARE)
+    expect(parseImageModel(MODEL_SUNBURST)).toBe(MODEL_SUNBURST)
+    expect(() => parseImageModel("gpt-image-1")).toThrow("Invalid image model")
+    expect(() => parseImageModel("dall-e-3")).toThrow("Invalid image model")
   })
 })

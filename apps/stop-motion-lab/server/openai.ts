@@ -1,7 +1,9 @@
 import {
-  MODEL_FLARE,
+  MODEL_DEFAULT,
   parseFrameCount,
   parseFrameIndex,
+  parseImageModel,
+  type ImageModel,
 } from "../src/lib/frames.ts"
 import { buildEditPrompt, buildGeneratePrompt } from "../src/lib/prompts.ts"
 import { apiMode, resolveEnv, type RuntimeEnv } from "./env.ts"
@@ -35,7 +37,11 @@ async function openaiError(response: Response): Promise<string> {
   return text.slice(0, 400) || `OpenAI HTTP ${response.status}`
 }
 
-async function generateLive(prompt: string, apiKey: string): Promise<string> {
+async function generateLive(
+  prompt: string,
+  apiKey: string,
+  model: ImageModel,
+): Promise<string> {
   const response = await fetch(OPENAI_GENERATIONS, {
     method: "POST",
     headers: {
@@ -43,7 +49,7 @@ async function generateLive(prompt: string, apiKey: string): Promise<string> {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: MODEL_FLARE,
+      model,
       prompt,
       n: 1,
       size: "1024x1024",
@@ -62,10 +68,11 @@ async function editLive(
   imageB64: string,
   prompt: string,
   apiKey: string,
+  model: ImageModel,
 ): Promise<string> {
   const bytes = base64ToBytes(imageB64)
   const form = new FormData()
-  form.set("model", MODEL_FLARE)
+  form.set("model", model)
   form.set("prompt", prompt)
   form.set("n", "1")
   form.set("size", "1024x1024")
@@ -88,6 +95,7 @@ async function editLive(
 export async function generateFrame(
   subjectPrompt: string,
   env: RuntimeEnv = resolveEnv(),
+  model: ImageModel = MODEL_DEFAULT,
 ): Promise<ImageResult> {
   const prompt = buildGeneratePrompt(subjectPrompt)
   if (apiMode(env) === "stub") {
@@ -95,12 +103,12 @@ export async function generateFrame(
     return {
       b64: bytesToBase64(stubFramePng(1, FRAME_STUB_HINT)),
       stub: true,
-      model: MODEL_FLARE,
+      model,
     }
   }
   const key = env.OPENAI_API_KEY?.trim()
   if (!key) throw new Error("OPENAI_API_KEY is missing")
-  return { b64: await generateLive(prompt, key), stub: false, model: MODEL_FLARE }
+  return { b64: await generateLive(prompt, key, model), stub: false, model }
 }
 
 export async function editFrame(
@@ -109,11 +117,13 @@ export async function editFrame(
     motionPrompt: string
     frameIndex: unknown
     frameCount: unknown
+    model?: unknown
   },
   env: RuntimeEnv = resolveEnv(),
 ): Promise<ImageResult> {
   const frameCount = parseFrameCount(input.frameCount)
   const frameIndex = parseFrameIndex(input.frameIndex, frameCount)
+  const model = parseImageModel(input.model)
   const prompt = buildEditPrompt(input.motionPrompt, frameIndex, frameCount)
 
   if (apiMode(env) === "stub") {
@@ -121,7 +131,7 @@ export async function editFrame(
     return {
       b64: bytesToBase64(stubFramePng(frameIndex, frameCount)),
       stub: true,
-      model: MODEL_FLARE,
+      model,
     }
   }
 
@@ -131,8 +141,8 @@ export async function editFrame(
   const key = env.OPENAI_API_KEY?.trim()
   if (!key) throw new Error("OPENAI_API_KEY is missing")
   return {
-    b64: await editLive(input.imageB64, prompt, key),
+    b64: await editLive(input.imageB64, prompt, key, model),
     stub: false,
-    model: MODEL_FLARE,
+    model,
   }
 }
