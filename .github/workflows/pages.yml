@@ -27,6 +27,10 @@ jobs:
       - name: Build combined site
         run: bun scripts/build-pages-site.ts
 
+      # wrangler pages deploy looks for ./functions in cwd (repo root), not dist/functions.
+      - name: List Pages Functions
+        run: find functions -type f | sort
+
       - name: Ensure Pages project
         uses: cloudflare/wrangler-action@v3
         continue-on-error: true
