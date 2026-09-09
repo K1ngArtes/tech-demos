@@ -8,11 +8,12 @@ A one-user lab that turns a subject prompt (or a reference still) plus a motion 
 
 In:
 
-- One screen: subject + motion prompts, Flare / Sunburst toggle (default Flare), frame-count slider, FPS, Generate / Stop
+- One screen: subject + motion prompts, Flare / Sunburst toggle (default Flare), quality toggle `low` | `medium` | `high` (default `low`), frame-count slider, FPS, Generate / Stop
 - Hard frame cap: default 8, min 4, max 16 (slider + server clamp — cannot exceed 16)
-- Frame 1: Images API generate with the selected model (`gpt-image-2.5-flare` or `gpt-image-2.5-sunburst`), or an uploaded/pasted reference still
-- Frames 2…N: Images API edit of the previous frame with the same allowlisted model; instruction keeps character/camera identical and applies only the next micro-motion
-- Server allowlists only those two model ids — arbitrary client strings are 400
+- Frame 1: Images API generate with the selected model (`gpt-image-2.5-flare` or `gpt-image-2.5-sunburst`) and selected quality, or an uploaded/pasted reference still
+- Frames 2…N: Images API edit of the previous frame with the same allowlisted model **and** quality; instruction keeps character/camera identical and applies only the next micro-motion
+- Server allowlists only those two model ids and the three Images API quality values — omitted quality defaults to `low`; arbitrary client strings are 400
+- Higher quality is sharper / less mush and costs more + slower; it does **not** fully fix multi-hop color-grade drift
 - Filmstrip + playhead scrubber, play loop, download GIF and a zip of frames
 - `OPENAI_API_KEY` lives only on the server: local `.env`, or Cloudflare Pages → Settings → Environment variables (Production **and** Preview). Never `VITE_*`, never the browser, never GitHub Actions secrets
 - Public production generate: repo-root Pages Functions at `/api/status`, `/api/generate`, `/api/edit` reuse the same handler as `bun run dev`. No password, Access gate, or `DEMO_PASSWORD`
@@ -28,9 +29,9 @@ Out:
 ## Tasks
 
 1. Scaffold Vite + React + TypeScript with Bun, `bunfig.toml`, and shadcn/ui. Set Vite `base: '/stop-motion-lab/'`.
-2. Shared Bun/Vite API: `POST /api/generate` and `POST /api/edit` hold the key; clamp frame counts; allowlisted Flare or Sunburst + `quality: low` + `1024x1024` PNG. Stub frames when no key.
-3. One lab screen: prompts, Flare / Sunburst toggle (default Flare), 4–16 frame slider (default 8), FPS, optional reference still, Generate / Stop, progress, filmstrip + playhead, loop, GIF + zip.
-4. Tests for frame-cap clamp, model allowlist, edit-prompt builder, and the JSON API contract only; no git hooks.
+2. Shared Bun/Vite API: `POST /api/generate` and `POST /api/edit` hold the key; clamp frame counts; allowlisted Flare or Sunburst + allowlisted `quality` (default `low`) + `1024x1024` PNG. Stub frames when no key.
+3. One lab screen: prompts, Flare / Sunburst toggle (default Flare) stacked next to Low / Medium / High quality (default Low), 4–16 frame slider (default 8), FPS, optional reference still, Generate / Stop, progress, filmstrip + playhead, loop, GIF + zip.
+4. Tests for frame-cap clamp, model allowlist, quality allowlist + passthrough, edit-prompt builder, and the JSON API contract only; no git hooks.
 5. Repo-root Cloudflare Pages Functions (`functions/api/`) call the same `handleApi` + OpenAI helpers. Combined `dist/` build writes `_routes.json` so `/api/*` is Functions and SPA `_redirects` never swallow those paths. `wrangler pages deploy dist` picks up `./functions` from the repo root.
 
 ## Stack
@@ -45,7 +46,7 @@ Out:
 
 ## Deferred
 
-- Higher quality / larger sizes than `quality: low` + `1024x1024` — spend and latency; Sunburst is selectable but still uses the same size/quality bound.
+- Larger sizes than `1024x1024`, frame-1 dual conditioning, and grade-lock extras — quality toggle only; chained hops can still drift.
 - Soft rate limits / passwords — user asked them skipped; OpenAI spend limit is the cost control.
 - Multi-shot stories, audio, onion skin, video export — outside the approved cut.
 

@@ -2,7 +2,9 @@
 
 Single-user MVP that chains GPT-Image 2.5 generate → edit hops into a short looping stop-motion GIF. Inspired by [Charlie Guo](https://x.com/charlierguo/status/2097399137142772071).
 
-Frame 1 is an Images API **generate** (or an uploaded/pasted still). Frames 2…N **edit** the previous PNG so only the next micro-motion lands. Pick **Flare** (`gpt-image-2.5-flare`, default — cheaper/faster) or **Sunburst** (`gpt-image-2.5-sunburst`, higher quality/cost) before Generate. The server allowlists only those two ids. Hard cap: **4–16 frames, default 8**.
+Frame 1 is an Images API **generate** (or an uploaded/pasted still). Frames 2…N **edit** the previous PNG so only the next micro-motion lands. Pick **Flare** (`gpt-image-2.5-flare`, default — cheaper/faster) or **Sunburst** (`gpt-image-2.5-sunburst`) and image **quality** `low` (default) / `medium` / `high` before Generate. The server allowlists only those model ids and quality values. Hard cap: **4–16 frames, default 8**.
+
+Higher quality is usually sharper and less mushy, but costs more and takes longer. It does **not** fully fix color-grade drift across chained generate→edit hops.
 
 ## Run
 
@@ -23,8 +25,8 @@ After `bun run build`, `bun run start` serves `dist/` and the same API on port 5
 | Route | Role |
 | --- | --- |
 | `GET /api/status` | `openai` vs `stub` |
-| `POST /api/generate` | Frame 1 · allowlisted `model` (default Flare) · `quality: low` · `1024x1024` PNG |
-| `POST /api/edit` | Frames 2…N · previous PNG + motion instruction · same `model` |
+| `POST /api/generate` | Frame 1 · allowlisted `model` (default Flare) · allowlisted `quality` (default `low`) · `1024x1024` PNG |
+| `POST /api/edit` | Frames 2…N · previous PNG + motion instruction · same `model` and `quality` |
 
 The client calls origin-absolute `/api/*` (not `/stop-motion-lab/api/*`). Local Vite middleware, `bun run start`, and Cloudflare Pages Functions all run the same `server/handle.ts` contract.
 
@@ -47,7 +49,7 @@ Until that Pages variable is set, `/api/status` reports `stub` and Generate stil
 
 PR preview deployments stay in stub mode until the **Preview** variable exists. Production (`https://tech-demos-6tg.pages.dev/stop-motion-lab/`) stays in stub until the **Production** variable exists.
 
-Cost control is the user’s OpenAI spend limit plus the hard 4–16 frame clamp. Sunburst costs more per image than Flare.
+Cost control is the user’s OpenAI spend limit plus the hard 4–16 frame clamp. Sunburst costs more per image than Flare. `medium` / `high` quality also cost more than `low`.
 
 ## Spend bound
 

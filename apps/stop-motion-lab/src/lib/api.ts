@@ -5,6 +5,7 @@ export type StatusResponse = {
   model: string
   sunburst: string
   models: string[]
+  qualities: string[]
   note: string
 }
 
@@ -12,6 +13,7 @@ export type ImageResponse = {
   b64: string
   stub: boolean
   model: string
+  quality: string
 }
 
 async function readJson<T>(response: Response): Promise<T> {
@@ -29,12 +31,17 @@ export function status(): Promise<StatusResponse> {
 export function generate(input: {
   prompt: string
   model?: string
+  quality?: string
   signal?: AbortSignal
 }): Promise<ImageResponse> {
   return fetch("/api/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt: input.prompt, model: input.model }),
+    body: JSON.stringify({
+      prompt: input.prompt,
+      model: input.model,
+      quality: input.quality,
+    }),
     signal: input.signal,
   }).then((response) => readJson<ImageResponse>(response))
 }
@@ -45,6 +52,7 @@ export function edit(input: {
   frameIndex: number
   frameCount: number
   model?: string
+  quality?: string
   signal?: AbortSignal
 }): Promise<ImageResponse> {
   return fetch("/api/edit", {
@@ -56,6 +64,7 @@ export function edit(input: {
       frameIndex: input.frameIndex,
       frameCount: input.frameCount,
       model: input.model,
+      quality: input.quality,
     }),
     signal: input.signal,
   }).then((response) => readJson<ImageResponse>(response))

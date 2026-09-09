@@ -21,6 +21,7 @@ describe("handleApi", () => {
     expect(body.model).toBe("gpt-image-2.5-flare")
     expect(body.sunburst).toBe("gpt-image-2.5-sunburst")
     expect(body.models).toEqual(["gpt-image-2.5-flare", "gpt-image-2.5-sunburst"])
+    expect(body.qualities).toEqual(["low", "medium", "high"])
   })
 
   test("GET /api/status is openai when a Pages secret is bound", async () => {
@@ -82,6 +83,45 @@ describe("handleApi", () => {
     expect((await jsonOf(response)).error).toBe("Invalid image model")
   })
 
+  test("POST /api/generate defaults omitted quality to low", async () => {
+    const response = await handleApi(
+      new Request("http://localhost/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: "a clay fox" }),
+      }),
+      stubEnv,
+    )
+    expect(response.status).toBe(200)
+    expect((await jsonOf(response)).quality).toBe("low")
+  })
+
+  test("POST /api/generate echoes an allowlisted quality", async () => {
+    const response = await handleApi(
+      new Request("http://localhost/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: "a clay fox", quality: "high" }),
+      }),
+      stubEnv,
+    )
+    expect(response.status).toBe(200)
+    expect((await jsonOf(response)).quality).toBe("high")
+  })
+
+  test("POST /api/generate rejects a quality outside the allowlist", async () => {
+    const response = await handleApi(
+      new Request("http://localhost/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: "a clay fox", quality: "ultra" }),
+      }),
+      stubEnv,
+    )
+    expect(response.status).toBe(400)
+    expect((await jsonOf(response)).error).toBe("Invalid image quality")
+  })
+
   test("POST /api/edit rejects a model outside the allowlist", async () => {
     const response = await handleApi(
       new Request("http://localhost/api/edit", {
@@ -98,6 +138,42 @@ describe("handleApi", () => {
     )
     expect(response.status).toBe(400)
     expect((await jsonOf(response)).error).toBe("Invalid image model")
+  })
+
+  test("POST /api/edit echoes an allowlisted quality", async () => {
+    const response = await handleApi(
+      new Request("http://localhost/api/edit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          motionPrompt: "turn the head",
+          frameIndex: 2,
+          frameCount: 8,
+          quality: "medium",
+        }),
+      }),
+      stubEnv,
+    )
+    expect(response.status).toBe(200)
+    expect((await jsonOf(response)).quality).toBe("medium")
+  })
+
+  test("POST /api/edit rejects a quality outside the allowlist", async () => {
+    const response = await handleApi(
+      new Request("http://localhost/api/edit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          motionPrompt: "turn the head",
+          frameIndex: 2,
+          frameCount: 8,
+          quality: "auto",
+        }),
+      }),
+      stubEnv,
+    )
+    expect(response.status).toBe(400)
+    expect((await jsonOf(response)).error).toBe("Invalid image quality")
   })
 
   test("POST /api/generate returns a stub PNG", async () => {
@@ -150,6 +226,7 @@ describe("handleApi", () => {
     const body = await jsonOf(response)
     expect(body.stub).toBe(true)
     expect(body.model).toBe("gpt-image-2.5-flare")
+    expect(body.quality).toBe("low")
   })
 
   test("unknown routes 404", async () => {
