@@ -1,9 +1,12 @@
 import {
   MODEL_DEFAULT,
+  QUALITY_DEFAULT,
   parseFrameCount,
   parseFrameIndex,
   parseImageModel,
+  parseImageQuality,
   type ImageModel,
+  type ImageQuality,
 } from "../src/lib/frames.ts"
 import { buildEditPrompt, buildGeneratePrompt } from "../src/lib/prompts.ts"
 import { apiMode, resolveEnv, type RuntimeEnv } from "./env.ts"
@@ -20,6 +23,7 @@ export type ImageResult = {
   b64: string
   stub: boolean
   model: string
+  quality: ImageQuality
 }
 
 function sleep(ms: number) {
@@ -41,6 +45,7 @@ async function generateLive(
   prompt: string,
   apiKey: string,
   model: ImageModel,
+  quality: ImageQuality,
 ): Promise<string> {
   const response = await fetch(OPENAI_GENERATIONS, {
     method: "POST",
@@ -53,7 +58,7 @@ async function generateLive(
       prompt,
       n: 1,
       size: "1024x1024",
-      quality: "low",
+      quality,
       output_format: "png",
     }),
   })
@@ -69,6 +74,7 @@ async function editLive(
   prompt: string,
   apiKey: string,
   model: ImageModel,
+  quality: ImageQuality,
 ): Promise<string> {
   const bytes = base64ToBytes(imageB64)
   const form = new FormData()
@@ -76,7 +82,7 @@ async function editLive(
   form.set("prompt", prompt)
   form.set("n", "1")
   form.set("size", "1024x1024")
-  form.set("quality", "low")
+  form.set("quality", quality)
   form.set("output_format", "png")
   form.set("image", new File([bytes], "frame.png", { type: "image/png" }))
 
@@ -96,6 +102,7 @@ export async function generateFrame(
   subjectPrompt: string,
   env: RuntimeEnv = resolveEnv(),
   model: ImageModel = MODEL_DEFAULT,
+  quality: ImageQuality = QUALITY_DEFAULT,
 ): Promise<ImageResult> {
   const prompt = buildGeneratePrompt(subjectPrompt)
   if (apiMode(env) === "stub") {
@@ -104,11 +111,17 @@ export async function generateFrame(
       b64: bytesToBase64(stubFramePng(1, FRAME_STUB_HINT)),
       stub: true,
       model,
+      quality,
     }
   }
   const key = env.OPENAI_API_KEY?.trim()
   if (!key) throw new Error("OPENAI_API_KEY is missing")
-  return { b64: await generateLive(prompt, key, model), stub: false, model }
+  return {
+    b64: await generateLive(prompt, key, model, quality),
+    stub: false,
+    model,
+    quality,
+  }
 }
 
 export async function editFrame(
@@ -118,12 +131,14 @@ export async function editFrame(
     frameIndex: unknown
     frameCount: unknown
     model?: unknown
+    quality?: unknown
   },
   env: RuntimeEnv = resolveEnv(),
 ): Promise<ImageResult> {
   const frameCount = parseFrameCount(input.frameCount)
   const frameIndex = parseFrameIndex(input.frameIndex, frameCount)
   const model = parseImageModel(input.model)
+  const quality = parseImageQuality(input.quality)
   const prompt = buildEditPrompt(input.motionPrompt, frameIndex, frameCount)
 
   if (apiMode(env) === "stub") {
@@ -132,6 +147,7 @@ export async function editFrame(
       b64: bytesToBase64(stubFramePng(frameIndex, frameCount)),
       stub: true,
       model,
+      quality,
     }
   }
 
@@ -141,8 +157,9 @@ export async function editFrame(
   const key = env.OPENAI_API_KEY?.trim()
   if (!key) throw new Error("OPENAI_API_KEY is missing")
   return {
-    b64: await editLive(input.imageB64, prompt, key, model),
+    b64: await editLive(input.imageB64, prompt, key, model, quality),
     stub: false,
     model,
+    quality,
   }
 }

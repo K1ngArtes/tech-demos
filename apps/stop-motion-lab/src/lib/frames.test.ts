@@ -10,6 +10,11 @@ import {
   parseFrameCount,
   parseFrameIndex,
   parseImageModel,
+  parseImageQuality,
+  QUALITY_DEFAULT,
+  QUALITY_HIGH,
+  QUALITY_LOW,
+  QUALITY_MEDIUM,
 } from "./frames.ts"
 
 describe("clampFrameCount", () => {
@@ -54,5 +59,23 @@ describe("parseImageModel", () => {
     expect(parseImageModel(MODEL_SUNBURST)).toBe(MODEL_SUNBURST)
     expect(() => parseImageModel("gpt-image-1")).toThrow("Invalid image model")
     expect(() => parseImageModel("dall-e-3")).toThrow("Invalid image model")
+  })
+})
+
+describe("parseImageQuality", () => {
+  test("defaults omitted values to low", () => {
+    expect(parseImageQuality(undefined)).toBe(QUALITY_DEFAULT)
+    expect(parseImageQuality(null)).toBe(QUALITY_LOW)
+    expect(parseImageQuality("")).toBe(QUALITY_LOW)
+  })
+
+  test("allowlists low, medium, and high only", () => {
+    expect(parseImageQuality(QUALITY_LOW)).toBe(QUALITY_LOW)
+    expect(parseImageQuality(QUALITY_MEDIUM)).toBe(QUALITY_MEDIUM)
+    expect(parseImageQuality(QUALITY_HIGH)).toBe(QUALITY_HIGH)
+    expect(parseImageQuality("  high  ")).toBe(QUALITY_HIGH)
+    expect(() => parseImageQuality("auto")).toThrow("Invalid image quality")
+    expect(() => parseImageQuality("ultra")).toThrow("Invalid image quality")
+    expect(() => parseImageQuality(2)).toThrow("Invalid image quality")
   })
 })

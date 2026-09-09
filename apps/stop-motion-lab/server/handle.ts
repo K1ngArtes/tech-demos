@@ -1,8 +1,10 @@
 import {
   IMAGE_MODELS,
+  IMAGE_QUALITIES,
   MODEL_FLARE,
   MODEL_SUNBURST,
   parseImageModel,
+  parseImageQuality,
 } from "../src/lib/frames.ts"
 import { apiMode, resolveEnv, type RuntimeEnv } from "./env.ts"
 import { editFrame, generateFrame } from "./openai.ts"
@@ -30,10 +32,11 @@ export async function handleApi(
       model: MODEL_FLARE,
       sunburst: MODEL_SUNBURST,
       models: [...IMAGE_MODELS],
+      qualities: [...IMAGE_QUALITIES],
       note:
         mode === "stub"
           ? "UI-with-stub: OPENAI_API_KEY missing or STUB_OPENAI=1. Real generate/edit wiring is present."
-          : "Live generate/edit. Pick Flare or Sunburst in the UI.",
+          : "Live generate/edit. Pick Flare or Sunburst and image quality in the UI.",
     })
   }
 
@@ -43,10 +46,21 @@ export async function handleApi(
 
   try {
     if (path === "/api/generate") {
-      const body = (await request.json()) as { prompt?: string; model?: unknown }
+      const body = (await request.json()) as {
+        prompt?: string
+        model?: unknown
+        quality?: unknown
+      }
       const prompt = body.prompt?.trim()
       if (!prompt) return json({ error: "Subject prompt is required" }, 400)
-      return json(await generateFrame(prompt, runtime, parseImageModel(body.model)))
+      return json(
+        await generateFrame(
+          prompt,
+          runtime,
+          parseImageModel(body.model),
+          parseImageQuality(body.quality),
+        ),
+      )
     }
 
     if (path === "/api/edit") {
@@ -56,6 +70,7 @@ export async function handleApi(
         frameIndex?: number
         frameCount?: number
         model?: unknown
+        quality?: unknown
       }
       const motionPrompt = body.motionPrompt?.trim()
       if (!motionPrompt) return json({ error: "Motion prompt is required" }, 400)
@@ -67,6 +82,7 @@ export async function handleApi(
             frameIndex: body.frameIndex,
             frameCount: body.frameCount,
             model: body.model,
+            quality: body.quality,
           },
           runtime,
         ),

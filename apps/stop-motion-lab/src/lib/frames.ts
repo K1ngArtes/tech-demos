@@ -12,8 +12,21 @@ export const IMAGE_MODELS = [MODEL_FLARE, MODEL_SUNBURST] as const
 export type ImageModel = (typeof IMAGE_MODELS)[number]
 export const MODEL_DEFAULT = MODEL_FLARE
 
+export const QUALITY_LOW = "low"
+export const QUALITY_MEDIUM = "medium"
+export const QUALITY_HIGH = "high"
+export const IMAGE_QUALITIES = [QUALITY_LOW, QUALITY_MEDIUM, QUALITY_HIGH] as const
+export type ImageQuality = (typeof IMAGE_QUALITIES)[number]
+export const QUALITY_DEFAULT = QUALITY_LOW
+
 export function imageModelLabel(model: ImageModel): "Flare" | "Sunburst" {
   return model === MODEL_SUNBURST ? "Sunburst" : "Flare"
+}
+
+export function imageQualityLabel(quality: ImageQuality): "Low" | "Medium" | "High" {
+  if (quality === QUALITY_HIGH) return "High"
+  if (quality === QUALITY_MEDIUM) return "Medium"
+  return "Low"
 }
 
 /** Allowlist only Flare and Sunburst. Omitted / empty defaults to Flare. */
@@ -25,6 +38,23 @@ export function parseImageModel(value: unknown): ImageModel {
   const model = value.trim()
   if (model === MODEL_FLARE || model === MODEL_SUNBURST) return model
   throw new Error("Invalid image model")
+}
+
+/** Allowlist Images API quality: low | medium | high. Omitted / empty defaults to low. */
+export function parseImageQuality(value: unknown): ImageQuality {
+  if (value === undefined || value === null || value === "") return QUALITY_DEFAULT
+  if (typeof value !== "string") {
+    throw new Error("Invalid image quality")
+  }
+  const quality = value.trim()
+  if (
+    quality === QUALITY_LOW ||
+    quality === QUALITY_MEDIUM ||
+    quality === QUALITY_HIGH
+  ) {
+    return quality
+  }
+  throw new Error("Invalid image quality")
 }
 
 export function clampFrameCount(value: number): number {
