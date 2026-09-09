@@ -96,7 +96,30 @@ ${list}
 
 await Bun.write(join(outDir, "index.html"), index)
 
+const functionsApi = join(root, "functions", "api")
+const functionsOk = await stat(functionsApi).catch(() => null)
+if (!functionsOk) {
+  throw new Error(
+    "Missing repo-root functions/api — wrangler pages deploy looks for ./functions beside dist, not inside it.",
+  )
+}
+
+// Functions only for /api/* so SPA 200 rewrites still apply to /<slug>/*.
+await Bun.write(
+  join(outDir, "_routes.json"),
+  `${JSON.stringify(
+    {
+      version: 1,
+      include: ["/api/*"],
+      exclude: [],
+    },
+    null,
+    2,
+  )}\n`,
+)
+
 const redirects = [
+  "# /api/* is Cloudflare Pages Functions (functions/api). Do not add a site-wide /* 200 rewrite.",
   ...apps.map((app) => `/${app.slug}/*    /${app.slug}/index.html    200`),
   "",
 ].join("\n")
@@ -104,3 +127,4 @@ await Bun.write(join(outDir, "_redirects"), redirects)
 
 console.log(`\nCombined site → ${outDir}`)
 for (const app of apps) console.log(`  /${app.slug}/`)
+console.log(`Pages Functions → ${functionsApi}`)

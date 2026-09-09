@@ -1,5 +1,3 @@
-import { deflateSync } from "node:zlib"
-
 function crc32(bytes: Uint8Array): number {
   let crc = 0xffffffff
   for (const byte of bytes) {
@@ -19,6 +17,51 @@ function u32(value: number): Uint8Array {
     (value >>> 8) & 0xff,
     value & 0xff,
   ])
+}
+
+/** RFC 1950 zlib wrapper around stored (uncompressed) RFC 1951 blocks. */
+function adler32(data: Uint8Array): number {
+  let a = 1
+  let b = 0
+  const mod = 65521
+  for (let i = 0; i < data.length; i++) {
+    a = (a + data[i]!) % mod
+    b = (b + a) % mod
+  }
+  return ((b << 16) | a) >>> 0
+}
+
+function zlibStore(data: Uint8Array): Uint8Array {
+  const max = 65535
+  const blockCount = Math.max(1, Math.ceil(data.length / max) || 1)
+  const out = new Uint8Array(2 + blockCount * 5 + data.length + 4)
+  // CMF/FLG 0x78 0x01 — CM=8, CINFO=7, FLEVEL=0, header % 31 === 0
+  out[0] = 0x78
+  out[1] = 0x01
+  let dest = 2
+  let offset = 0
+  if (data.length === 0) {
+    out[dest] = 0x01
+    dest += 5
+  } else {
+    while (offset < data.length) {
+      const remaining = data.length - offset
+      const len = Math.min(max, remaining)
+      const last = offset + len >= data.length
+      out[dest] = last ? 0x01 : 0x00
+      out[dest + 1] = len & 0xff
+      out[dest + 2] = (len >>> 8) & 0xff
+      const nlen = ~len & 0xffff
+      out[dest + 3] = nlen & 0xff
+      out[dest + 4] = (nlen >>> 8) & 0xff
+      dest += 5
+      out.set(data.subarray(offset, offset + len), dest)
+      dest += len
+      offset += len
+    }
+  }
+  out.set(u32(adler32(data)), dest)
+  return dest + 4 === out.length ? out : out.subarray(0, dest + 4)
 }
 
 function chunk(type: string, data: Uint8Array): Uint8Array {
@@ -55,7 +98,7 @@ export function encodeRgbPng(
   const parts = [
     signature,
     chunk("IHDR", ihdr),
-    chunk("IDAT", deflateSync(raw)),
+    chunk("IDAT", zlibStore(raw)),
     chunk("IEND", new Uint8Array()),
   ]
   const total = parts.reduce((sum, part) => sum + part.length, 0)
@@ -156,6 +199,4 @@ export function stubFramePng(frameIndex: number, frameCount: number): Uint8Array
   return encodeRgbPng(size, size, rgb)
 }
 
-export function pngToBase64(png: Uint8Array): string {
-  return Buffer.from(png).toString("base64")
-}
+export { bytesToBase64 as pngToBase64 } from "./bytes.ts"

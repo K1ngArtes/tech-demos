@@ -20,5 +20,13 @@
     "noFallthroughCasesInSwitch": true,
     "ignoreDeprecations": "6.0"
   },
-  "include": ["vite.config.ts", "server/connect.ts", "server/handle.ts", "server/openai.ts", "server/png.ts"]
+  "include": [
+    "vite.config.ts",
+    "server/bytes.ts",
+    "server/connect.ts",
+    "server/env.ts",
+    "server/handle.ts",
+    "server/openai.ts",
+    "server/png.ts"
+  ]
 }

@@ -26,11 +26,28 @@ After `bun run build`, `bun run start` serves `dist/` and the same API on port 5
 | `POST /api/generate` | Frame 1 · `gpt-image-2.5-flare` · `quality: low` · `1024x1024` PNG |
 | `POST /api/edit` | Frames 2…N · previous PNG + motion instruction |
 
+The client calls origin-absolute `/api/*` (not `/stop-motion-lab/api/*`). Local Vite middleware, `bun run start`, and Cloudflare Pages Functions all run the same `server/handle.ts` contract.
+
 If `OPENAI_API_KEY` is missing, or `STUB_OPENAI=1`, the server returns canned bouncing-ball PNGs so the UI can be exercised without image credits. The client→server→OpenAI wiring is still the live path when a key is present.
 
 ## Production (Cloudflare Pages)
 
-The combined tech-demos Pages site hosts this SPA at `/stop-motion-lab/`. That build is **static** — generate/edit is local-only (`bun run dev` or `bun run start`). A Pages secret named `OPENAI_API_KEY` would only matter if a Function were added later; this MVP does not ship one.
+The combined tech-demos site hosts this SPA at [https://tech-demos-6tg.pages.dev/stop-motion-lab/](https://tech-demos-6tg.pages.dev/stop-motion-lab/). Generate/edit on that origin are **public Pages Functions** (`functions/api/` at the repo root) — no password, no Cloudflare Access, no `DEMO_PASSWORD`.
+
+### Add the OpenAI secret (required for live Flare)
+
+The key is **not** a GitHub Actions secret and must not be prefixed `VITE_`.
+
+1. Cloudflare Dashboard → **Workers & Pages** → project **`tech-demos`**
+2. **Settings** → **Environment variables**
+3. Add `OPENAI_API_KEY` for **Production** and again for **Preview**
+4. Redeploy (or merge to `main` / open a new preview) so the Functions pick up the binding
+
+Until that Pages variable is set, `/api/status` reports `stub` and Generate still works with canned frames (the UI does not hard-crash). After it is set, `/api/status` reports `openai` and Generate calls Flare.
+
+PR preview deployments stay in stub mode until the **Preview** variable exists. Production (`https://tech-demos-6tg.pages.dev/stop-motion-lab/`) stays in stub until the **Production** variable exists.
+
+Cost control is the user’s OpenAI spend limit plus the hard 4–16 frame clamp.
 
 `gpt-image-2.5-sunburst` is documented as the slower precision editor and is **not** required.
 
