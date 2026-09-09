@@ -1,12 +1,5 @@
 {
-  "proposed": [
-    {
-      "id": "2097399137142772071",
-      "title": "GPT-Image 2.5 stop-motion",
-      "url": "https://x.com/charlierguo/status/2097399137142772071",
-      "date": "2026-09-09"
-    }
-  ],
+  "proposed": [],
   "skipped": [
     {
       "id": "2094457600259842065",
@@ -41,6 +34,13 @@
       "url": "https://x.com/Zhiyu333/status/2094719194302706136",
       "date": "2026-09-02",
       "pr": "https://github.com/K1ngArtes/tech-demos/pull/1"
+    },
+    {
+      "id": "2097399137142772071",
+      "title": "GPT-Image 2.5 stop-motion",
+      "url": "https://x.com/charlierguo/status/2097399137142772071",
+      "date": "2026-09-09",
+      "pr": "https://github.com/K1ngArtes/tech-demos/pull/4"
     }
   ]
 }
