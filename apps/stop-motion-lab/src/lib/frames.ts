@@ -8,6 +8,24 @@ export const FPS_DEFAULT = 8
 
 export const MODEL_FLARE = "gpt-image-2.5-flare"
 export const MODEL_SUNBURST = "gpt-image-2.5-sunburst"
+export const IMAGE_MODELS = [MODEL_FLARE, MODEL_SUNBURST] as const
+export type ImageModel = (typeof IMAGE_MODELS)[number]
+export const MODEL_DEFAULT = MODEL_FLARE
+
+export function imageModelLabel(model: ImageModel): "Flare" | "Sunburst" {
+  return model === MODEL_SUNBURST ? "Sunburst" : "Flare"
+}
+
+/** Allowlist only Flare and Sunburst. Omitted / empty defaults to Flare. */
+export function parseImageModel(value: unknown): ImageModel {
+  if (value === undefined || value === null || value === "") return MODEL_DEFAULT
+  if (typeof value !== "string") {
+    throw new Error("Invalid image model")
+  }
+  const model = value.trim()
+  if (model === MODEL_FLARE || model === MODEL_SUNBURST) return model
+  throw new Error("Invalid image model")
+}
 
 export function clampFrameCount(value: number): number {
   if (!Number.isFinite(value)) return FRAME_DEFAULT

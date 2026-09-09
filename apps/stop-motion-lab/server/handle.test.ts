@@ -19,6 +19,8 @@ describe("handleApi", () => {
     const body = await jsonOf(response)
     expect(body.mode).toBe("stub")
     expect(body.model).toBe("gpt-image-2.5-flare")
+    expect(body.sunburst).toBe("gpt-image-2.5-sunburst")
+    expect(body.models).toEqual(["gpt-image-2.5-flare", "gpt-image-2.5-sunburst"])
   })
 
   test("GET /api/status is openai when a Pages secret is bound", async () => {
@@ -49,6 +51,53 @@ describe("handleApi", () => {
     )
     expect(response.status).toBe(400)
     expect((await jsonOf(response)).error).toBe("Subject prompt is required")
+  })
+
+  test("POST /api/generate echoes an allowlisted Sunburst model", async () => {
+    const response = await handleApi(
+      new Request("http://localhost/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: "a clay fox",
+          model: "gpt-image-2.5-sunburst",
+        }),
+      }),
+      stubEnv,
+    )
+    expect(response.status).toBe(200)
+    expect((await jsonOf(response)).model).toBe("gpt-image-2.5-sunburst")
+  })
+
+  test("POST /api/generate rejects a model outside the allowlist", async () => {
+    const response = await handleApi(
+      new Request("http://localhost/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: "a clay fox", model: "dall-e-3" }),
+      }),
+      stubEnv,
+    )
+    expect(response.status).toBe(400)
+    expect((await jsonOf(response)).error).toBe("Invalid image model")
+  })
+
+  test("POST /api/edit rejects a model outside the allowlist", async () => {
+    const response = await handleApi(
+      new Request("http://localhost/api/edit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          motionPrompt: "turn the head",
+          frameIndex: 2,
+          frameCount: 8,
+          model: "gpt-4o",
+        }),
+      }),
+      stubEnv,
+    )
+    expect(response.status).toBe(400)
+    expect((await jsonOf(response)).error).toBe("Invalid image model")
   })
 
   test("POST /api/generate returns a stub PNG", async () => {

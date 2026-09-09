@@ -35,6 +35,11 @@ import {
   FPS_DEFAULT,
   FPS_MAX,
   FPS_MIN,
+  imageModelLabel,
+  MODEL_DEFAULT,
+  MODEL_FLARE,
+  MODEL_SUNBURST,
+  type ImageModel,
 } from "@/lib/frames"
 
 const DEFAULT_SUBJECT =
@@ -52,6 +57,7 @@ export function Playground() {
   const [motion, setMotion] = useState(DEFAULT_MOTION)
   const [frameCount, setFrameCount] = useState(FRAME_DEFAULT)
   const [fps, setFps] = useState(FPS_DEFAULT)
+  const [model, setModel] = useState<ImageModel>(MODEL_DEFAULT)
   const [referenceB64, setReferenceB64] = useState<string | null>(null)
   const [frames, setFrames] = useState<string[]>([])
   const [playhead, setPlayhead] = useState(0)
@@ -136,7 +142,11 @@ export function Playground() {
       if (referenceB64) {
         collected.push(referenceB64)
       } else {
-        const first = await generate(subject, controller.signal)
+        const first = await generate({
+          prompt: subject,
+          model,
+          signal: controller.signal,
+        })
         collected.push(first.b64)
         usedStub = first.stub
       }
@@ -150,6 +160,7 @@ export function Playground() {
           motionPrompt: motion,
           frameIndex: index,
           frameCount: count,
+          model,
           signal: controller.signal,
         })
         collected.push(next.b64)
@@ -204,15 +215,15 @@ export function Playground() {
               Chain edits. Keep the puppet.
             </h1>
             <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              Frame 1 is a Flare generate (or your still). Each hop edits the
-              previous PNG so only the next micro-motion lands. Hard cap{" "}
-              {FRAME_MIN}–{FRAME_MAX} frames.
+              Frame 1 is a generate (or your still). Each hop edits the
+              previous PNG so only the next micro-motion lands. Pick Flare
+              (default) or Sunburst. Hard cap {FRAME_MIN}–{FRAME_MAX} frames.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="secondary">gpt-image-2.5-flare</Badge>
+            <Badge variant="secondary">{model}</Badge>
             <Badge variant={stub ? "outline" : "default"}>
-              {stub ? "UI-with-stub" : "Live Flare"}
+              {stub ? "UI-with-stub" : `Live ${imageModelLabel(model)}`}
             </Badge>
           </div>
         </div>
@@ -228,6 +239,38 @@ export function Playground() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
+            <div className="space-y-2">
+              <Label id="model-label">Model</Label>
+              <div
+                role="radiogroup"
+                aria-labelledby="model-label"
+                className="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1"
+              >
+                {(
+                  [
+                    [MODEL_FLARE, "Flare"],
+                    [MODEL_SUNBURST, "Sunburst"],
+                  ] as const
+                ).map(([id, label]) => (
+                  <Button
+                    key={id}
+                    type="button"
+                    role="radio"
+                    aria-checked={model === id}
+                    size="sm"
+                    variant={model === id ? "default" : "ghost"}
+                    disabled={busy}
+                    onClick={() => setModel(id)}
+                  >
+                    {label}
+                  </Button>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Flare is faster and cheaper. Sunburst is higher quality and
+                costs more.
+              </p>
+            </div>
             <div className="space-y-2">
               <Label htmlFor="subject">Subject</Label>
               <Textarea
